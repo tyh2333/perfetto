@@ -96,8 +96,7 @@ class MockSchedEventTracker : public SchedEventTracker {
   explicit MockSchedEventTracker(TraceProcessorContext* context)
       : SchedEventTracker(context) {}
 
-  MOCK_METHOD9(PushSchedSwitch,
-               void(uint32_t cpu,
+  MOCK_METHOD(void, PushSchedSwitch, (uint32_t cpu,
                     int64_t timestamp,
                     uint32_t prev_pid,
                     base::StringView prev_comm,
@@ -105,7 +104,7 @@ class MockSchedEventTracker : public SchedEventTracker {
                     int64_t prev_state,
                     uint32_t next_pid,
                     base::StringView next_comm,
-                    int32_t next_prio));
+                    int32_t next_prio), (override));
 };
 
 class MockProcessTracker : public ProcessTracker {
@@ -113,25 +112,21 @@ class MockProcessTracker : public ProcessTracker {
   explicit MockProcessTracker(TraceProcessorContext* context)
       : ProcessTracker(context) {}
 
-  MOCK_METHOD4(SetProcessMetadata,
-               UniquePid(uint32_t pid,
+  MOCK_METHOD(UniquePid, SetProcessMetadata, (uint32_t pid,
                          std::optional<uint32_t> ppid,
                          base::StringView process_name,
-                         base::StringView cmdline));
+                         base::StringView cmdline), (override));
 
-  MOCK_METHOD3(UpdateThreadName,
-               UniqueTid(uint32_t tid,
+  MOCK_METHOD(UniqueTid, UpdateThreadName, (uint32_t tid,
                          StringId thread_name_id,
-                         ThreadNamePriority priority));
-  MOCK_METHOD3(UpdateThreadNameByUtid,
-               void(UniqueTid utid,
+                         ThreadNamePriority priority), (override));
+  MOCK_METHOD(void, UpdateThreadNameByUtid, (UniqueTid utid,
                     StringId thread_name_id,
-                    ThreadNamePriority priority));
-  MOCK_METHOD2(UpdateThread, UniqueTid(uint32_t tid, uint32_t tgid));
+                    ThreadNamePriority priority), (override));
+  MOCK_METHOD(UniqueTid, UpdateThread, (uint32_t tid, uint32_t tgid), (override));
 
-  MOCK_METHOD1(GetOrCreateProcess, UniquePid(uint32_t pid));
-  MOCK_METHOD2(SetProcessNameIfUnset,
-               void(UniquePid upid, StringId process_name_id));
+  MOCK_METHOD(UniquePid, GetOrCreateProcess, (uint32_t pid), (override));
+  MOCK_METHOD(void, SetProcessNameIfUnset, (UniquePid upid, StringId process_name_id), (override));
 };
 class MockBoundInserter : public ArgsTracker::BoundInserter {
  public:
@@ -140,12 +135,10 @@ class MockBoundInserter : public ArgsTracker::BoundInserter {
     ON_CALL(*this, AddArg(_, _, _, _)).WillByDefault(ReturnRef(*this));
   }
 
-  MOCK_METHOD4(
-      AddArg,
-      ArgsTracker::BoundInserter&(StringId flat_key,
+  MOCK_METHOD(ArgsTracker::BoundInserter&, AddArg, (StringId flat_key,
                                   StringId key,
                                   Variadic v,
-                                  ArgsTracker::UpdatePolicy update_policy));
+                                  ArgsTracker::UpdatePolicy update_policy), (override));
 
  private:
   ArgsTracker tracker_;
@@ -157,8 +150,7 @@ class MockEventTracker : public EventTracker {
       : EventTracker(context) {}
   virtual ~MockEventTracker() = default;
 
-  MOCK_METHOD9(PushSchedSwitch,
-               void(uint32_t cpu,
+  MOCK_METHOD(void, PushSchedSwitch, (uint32_t cpu,
                     int64_t timestamp,
                     uint32_t prev_pid,
                     base::StringView prev_comm,
@@ -166,12 +158,11 @@ class MockEventTracker : public EventTracker {
                     int64_t prev_state,
                     uint32_t next_pid,
                     base::StringView next_comm,
-                    int32_t next_prio));
+                    int32_t next_prio), (override));
 
-  MOCK_METHOD3(PushCounter,
-               std::optional<CounterId>(int64_t timestamp,
+  MOCK_METHOD(std::optional<CounterId>, PushCounter, (int64_t timestamp,
                                         double value,
-                                        TrackId track_id));
+                                        TrackId track_id), (override));
 };
 
 class MockSliceTracker : public SliceTracker {
@@ -179,30 +170,26 @@ class MockSliceTracker : public SliceTracker {
   explicit MockSliceTracker(TraceProcessorContext* context)
       : SliceTracker(context) {}
 
-  MOCK_METHOD5(Begin,
-               std::optional<SliceId>(int64_t timestamp,
+  MOCK_METHOD(std::optional<SliceId>, Begin, (int64_t timestamp,
                                       TrackId track_id,
                                       StringId cat,
                                       StringId name,
-                                      SetArgsCallback args_callback));
-  MOCK_METHOD5(End,
-               std::optional<SliceId>(int64_t timestamp,
+                                      SetArgsCallback args_callback), (override));
+  MOCK_METHOD(std::optional<SliceId>, End, (int64_t timestamp,
                                       TrackId track_id,
                                       StringId cat,
                                       StringId name,
-                                      SetArgsCallback args_callback));
-  MOCK_METHOD6(Scoped,
-               std::optional<SliceId>(int64_t timestamp,
+                                      SetArgsCallback args_callback), (override));
+  MOCK_METHOD(std::optional<SliceId>, Scoped, (int64_t timestamp,
                                       TrackId track_id,
                                       StringId cat,
                                       StringId name,
                                       int64_t duration,
-                                      SetArgsCallback args_callback));
-  MOCK_METHOD4(StartSlice,
-               std::optional<SliceId>(int64_t timestamp,
+                                      SetArgsCallback args_callback), (override));
+  MOCK_METHOD(std::optional<SliceId>, StartSlice, (int64_t timestamp,
                                       TrackId track_id,
                                       SetArgsCallback args_callback,
-                                      std::function<SliceId()> inserter));
+                                      std::function<SliceId()> inserter), (override));
 };
 
 class FuchsiaTraceParserTest : public ::testing::Test {

@@ -38,11 +38,10 @@ class MockErrorReporter : public ErrorReporter {
  public:
   MockErrorReporter() {}
   ~MockErrorReporter() = default;
-  MOCK_METHOD4(AddError,
-               void(size_t line,
+  MOCK_METHOD(void, AddError, (size_t line,
                     size_t column_start,
                     size_t column_end,
-                    const std::string& message));
+                    const std::string& message), (override));
 };
 
 TraceConfig ToProto(const std::string& input) {
